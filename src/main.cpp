@@ -4,12 +4,12 @@
 #include "headers/communication.hpp"
 
 
-#define ENABLE_DISPLAY true
-#define ENABLE_LORA true
-#define ENABLE_SERIAL true
-#define PABOOST true
+#define 	ENABLE_DISPLAY 		true
+#define 	ENABLE_LORA 		true
+#define 	ENABLE_SERIAL 		true
+#define 	PABOOST 			true
 
-#define BAUD_RATE 115200
+#define 	BAUD_RATE 			115200
 
 
 const uint32_t license[4] = { 0xA13202B6,0x8B58DCC0,0x4E7F3DFD,0x6F51BFA3 };

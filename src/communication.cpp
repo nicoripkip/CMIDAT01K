@@ -5,7 +5,18 @@
 #include "headers/communication.hpp"
 
 
+#define     JSON_BUFFER_SIZE        2048
+
+#define     CODE_SUCCESS            200
+#define     CODE_ERROR_NOT_FOUND    404
+#define     CODE_ERROR_BAD_GATEWAY  500
+
+#define     MAX_RETRIES             20
+
+
+
 HTTPClient http;
+uint8_t retries_counter;
 
 
 /**
@@ -32,7 +43,14 @@ void Communication::network_init()
 
     while (WiFi.status() != WL_CONNECTED) {
         Serial.print(".");
+        retries_counter++;
         delay(500);
+
+        if (retries_counter >= MAX_RETRIES) {
+            Serial.print("[error]\t\tKan niet verbinden met netwerk: ");
+            Serial.println(SSID);
+            break;
+        }
     }
 
     Serial.print("[success]\tWifi verbonden op: ");
@@ -43,29 +61,90 @@ void Communication::network_init()
 /**
  * @brief 
  * 
- * @param value
+ * @param field 
+ * @param value 
  */
-void Communication::write_data(uint32_t value)
+void Communication::write_data(uint8_t field = 1, uint32_t value)
 {
     Serial.print("[info]\t\tSchrijf data naar: ");
     Serial.println(this->get_host());
 
-    String url = "https://" + this->get_host() + "/update?api_key=" + API_WRITE_KEY + "&field1=" + value;
+    String url = "https://" + this->get_host() + "/update?api_key=" + API_WRITE_KEY + "&field" + field + "=" + value;
     
     http.begin(url);
-    http.GET();
+    uint32_t status = http.GET();
 
-    Serial.print("[success]\tData succesvol weggeschreven!");
+    switch (status) 
+    {
+        case CODE_SUCCESS:
+            Serial.println("[success]\tData succesvol weggeschreven!");
+            return;
+        break;
+        case CODE_ERROR_NOT_FOUND:
+            Serial.println("[error]\t\tAPI endpoint niet gevonden!");
+            return;
+        break;
+        case CODE_ERROR_BAD_GATEWAY:
+            Serial.println("[error]\t\tServer niet online!");
+            return;
+        break;
+        default: 
+            Serial.print("[error]\t\tJe moet deze code maar zelf opzoeken! code: ");
+            Serial.println(status);
+            return;
+        break;
+    }
 }
 
 
 /**
  * @brief 
  * 
+ * @param channel 
+ * @param field 
+ * @param max_read_results 
  */
-void Communication::read_data()
+void Communication::read_data(uint32_t channel, uint8_t field, uint8_t max_read_results = 2)
 {
+    Serial.print("[info]\t\tLees data van: ");
+    Serial.print(this->get_host());
 
+    String url = "https://" + this->get_host() + "/channels/" + channel + "/fields/" + field + ".json?results=" + max_read_results;
+
+    http.begin(url);
+    uint16_t status = http.GET();
+
+    switch (status) 
+    {
+        case CODE_SUCCESS:
+            Serial.print("[success]\tData succesvol opgehaalt: " + status);
+
+            String response = http.getString();
+            DynamicJsonDocument json_buffer(JSON_BUFFER_SIZE);
+            DeserializationError json_decode_error = deserializeJson(json_buffer, response);
+
+            if (json_decode_error) {
+                Serial.println("[error]\t\tJson kan niet worden omgezet!");
+            }
+
+
+
+            return;
+        break;
+        case CODE_ERROR_NOT_FOUND:
+            Serial.println("[error]\t\tAPI endpoint niet gevonden!");
+            return;
+        break;
+        case CODE_ERROR_BAD_GATEWAY:
+            Serial.println("[error]\t\tServer niet online!");
+            return;
+        break;
+        default: 
+            Serial.print("[error]\t\tJe moet deze code maar zelf opzoeken! code: ");
+            Serial.println(status);
+            return;
+        break;
+    }
 }
 
 
