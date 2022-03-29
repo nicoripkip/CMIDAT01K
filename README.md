@@ -3,9 +3,10 @@
 ## Inhoudsopgave
 <ul>
     <li><a href="#algemene-informatie">Algemene informatie</a></li>
+    <li><a href="">Requirements</a></li>
     <li><a href="#installatie">Installatie</a></li>
     <li><a href="#branches">Branches</a></li>
-    <li><a href="#autheurs">Autheurs</a></li>
+    <li><a href="#autheur">Autheur</a></li>
 </ul>
 
 ## Algemene informatie
@@ -22,6 +23,19 @@ aangesloten. Deze sensoren zijn:
 Deze sensoren worden gebruikt om in mijn slaapkamer de leefomgeving te meten en de data te verzamelen. De data wordt verstuurd via <a href="https://en.wikipedia.org/wiki/LoRa">LoRa</a> en <a href="https://www.thethingsnetwork.org/">The Things Network</a>.
 
 </p>
+
+
+## Requirements
+<ul>
+    <li>PlatformIO op Visual Studio Code of Intellij</li>
+    <li>Arduino framework</li>
+    <li>BMP280 temperatuur sensor</li>
+    <li>BMP280 druk sensor</li>
+    <li>Vochtigheidssensor</li>
+    <li>Heltec ESP32 LoRa V2</li>
+    <li>Middleware zoals Thingsspeak/Azure of AWS</li>
+    <li>Account op de The Things Network</li>
+</ul>
 
 
 ## Installatie
