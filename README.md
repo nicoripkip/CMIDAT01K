@@ -2,10 +2,10 @@
 
 ## Inhoudsopgave
 <ul>
-    <li><a href="## Algemene Informatie">Algemene informatie</a></li>
-    <li><a href="## Installatie">Installatie</a></li>
-    <li><a href="## Branches">Branches</a></li>
-    <li><a href="## Autheurs">Autheurs</a></li>
+    <li><a href="#algemene-informatie">Algemene informatie</a></li>
+    <li><a href="#installatie">Installatie</a></li>
+    <li><a href="#branches">Branches</a></li>
+    <li><a href="#autheurs">Autheurs</a></li>
 </ul>
 
 ## Algemene informatie
