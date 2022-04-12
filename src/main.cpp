@@ -19,10 +19,12 @@
 #define 	PABOOST 			true
 
 #define 	BAUD_RATE 			115200
-
 #define 	DEVICE_ADDRESS		5
+#define		SCL_ADDRESS			0xC
+#define 	SDA_ADDRESS			0x0D
 
 #define TC74_TEMPERATURE_SENSOR_ADDRESS 0x4A
+#define RELAY_PIN						0x20
 
 
 
@@ -45,8 +47,10 @@ void setup()
 	Serial.begin(BAUD_RATE);
 	// wifi.network_init();
 
+	pinMode(RELAY_PIN, OUTPUT);
+
 	Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
-	Wire.begin(13, 12);
+	Wire.begin(SDA_ADDRESS, SCL_ADDRESS);
 }
 
 
@@ -58,6 +62,10 @@ void loop()
 {
 	Blynk.run();
 
+	digitalWrite(RELAY_PIN, HIGH);
+	delay(500);
+	digitalWrite(RELAY_PIN, LOW);
+	delay(500);
 
 	int temp = TC74_TEMPERATURE_get();
 }
@@ -76,6 +84,8 @@ int TC74_TEMPERATURE_get()
   int temperature = Wire.read();
 
   Wire.endTransmission(true);
+
+  Blynk.virtualWrite(V1, temperature);
 
   Serial.print("[info]\t\tDe temperatuur is: ");
   Serial.println(temperature);
