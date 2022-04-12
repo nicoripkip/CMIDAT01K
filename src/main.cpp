@@ -1,6 +1,15 @@
+#define BLYNK_DEBUG
+#define BLYNK_PRINT Serial
+#define BLYNK_TEMPLATE_ID "TMPL20Nz6Wmh"
+#define BLYNK_DEVICE_NAME "VentilatorOpNetwerk"
+#define BLYNK_AUTH_TOKEN "KICaLY4BdlVoZFauetvplH9upv7-mBqX"
+
+
 #include <heltec.h>
 #include <Arduino.h>
 #include <Wire.h>
+#include <Blynk.h>
+#include <BlynkSimpleEsp32.h>
 #include "headers/communication.hpp"
 
 
@@ -11,11 +20,20 @@
 
 #define 	BAUD_RATE 			115200
 
+#define 	DEVICE_ADDRESS		5
+
+#define TC74_TEMPERATURE_SENSOR_ADDRESS 0x4A
+
+
 
 const uint32_t license[4] = { 0xA13202B6,0x8B58DCC0,0x4E7F3DFD,0x6F51BFA3 };
 const char devideID[13] = "dc2014f7c630";
-
 Communication wifi("api.thingspeak.com", 80);
+int data;
+
+
+int TC74_TEMPERATURE_get();
+
 
 /**
  * @brief Functie voor het opzetten van het project
@@ -25,7 +43,10 @@ void setup()
 {
 	Heltec.begin(ENABLE_DISPLAY, ENABLE_LORA, ENABLE_SERIAL, PABOOST);
 	Serial.begin(BAUD_RATE);
-	wifi.network_init();
+	// wifi.network_init();
+
+	Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
+	Wire.begin(13, 12);
 }
 
 
@@ -35,9 +56,29 @@ void setup()
  */
 void loop()
 {
-	// int t[20] = {23, 24, 253, 76, 43, 57, 24 ,3 ,4,53,35,2 ,3,4,53,3,3};
+	Blynk.run();
 
-	// for (int i = 0;i < 20;i++) {
-	// 	wifi.write_data(t[i]);
-	// }
+
+	int temp = TC74_TEMPERATURE_get();
+}
+
+
+/**
+ * @brief Functie voor het opzetten van de TC74 sensor
+ * 
+ */
+int TC74_TEMPERATURE_get()
+{
+  Wire.beginTransmission(TC74_TEMPERATURE_SENSOR_ADDRESS);
+  Wire.write(0x00);;
+
+  Wire.requestFrom(TC74_TEMPERATURE_SENSOR_ADDRESS, 1);
+  int temperature = Wire.read();
+
+  Wire.endTransmission(true);
+
+  Serial.print("[info]\t\tDe temperatuur is: ");
+  Serial.println(temperature);
+
+  return temperature;
 }

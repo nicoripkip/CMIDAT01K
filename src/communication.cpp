@@ -64,7 +64,7 @@ void Communication::network_init()
  * @param field 
  * @param value 
  */
-void Communication::write_data(uint8_t field = 1, uint32_t value)
+void Communication::write_data(uint8_t field, uint32_t value)
 {
     Serial.print("[info]\t\tSchrijf data naar: ");
     Serial.println(this->get_host());
@@ -114,42 +114,34 @@ void Communication::read_data(uint32_t channel, uint8_t field, uint8_t max_read_
     http.begin(url);
     uint16_t status = http.GET();
 
-    switch (status) 
+    if (status == CODE_SUCCESS) 
     {
-        case CODE_SUCCESS:
-            Serial.print("[success]\tData succesvol opgehaalt: " + status);
+        Serial.print("[success]\tData succesvol opgehaalt: " + status);
 
-            String response = http.getString();
-            DynamicJsonDocument json_buffer(JSON_BUFFER_SIZE);
-            DeserializationError json_decode_error = deserializeJson(json_buffer, response);
+        String response = http.getString();
+        DynamicJsonDocument json_buffer(JSON_BUFFER_SIZE);
+        DeserializationError json_decode_error = deserializeJson(json_buffer, response);
 
-            if (json_decode_error) {
-                Serial.println("[error]\t\tJson kan niet worden omgezet!");
-            }
-
-
-
-            return;
-        break;
-        case CODE_ERROR_NOT_FOUND:
-            Serial.println("[error]\t\tAPI endpoint niet gevonden!");
-            return;
-        break;
-        case CODE_ERROR_BAD_GATEWAY:
-            Serial.println("[error]\t\tServer niet online!");
-            return;
-        break;
-        default: 
-            Serial.print("[error]\t\tJe moet deze code maar zelf opzoeken! code: ");
-            Serial.println(status);
-            return;
-        break;
+        if (json_decode_error) {
+            Serial.println("[error]\t\tJson kan niet worden omgezet!");
+        }
+    } else if (status == CODE_ERROR_NOT_FOUND) {
+        Serial.println("[error]\t\tAPI endpoint niet gevonden!");
+        return;
+    } else if (status == CODE_ERROR_BAD_GATEWAY) {
+        Serial.println("[error]\t\tServer niet online!");
+        return;
+    } else {
+        Serial.print("[error]\t\tJe moet deze code maar zelf opzoeken! code: ");
+        Serial.println(status);
+        return;
     }
 }
 
 
 /**
- * @brief Functie voor het zetten van de host
+ * @brie
+ * Functie voor het zetten van de host
  * 
  * @param host 
  */
