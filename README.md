@@ -35,11 +35,12 @@ Deze sensoren worden gebruikt om in mijn slaapkamer de leefomgeving te meten en 
     <li>Heltec ESP32 LoRa V2</li>
     <li>Middleware zoals Thingsspeak/Azure of AWS</li>
     <li>Account op de The Things Network</li>
+    <li>Random keukentafel ventilator op wisselspanning</li>
 </ul>
 
 
 ## Installatie
-<p>Voor uitgebreide installatie volg de wiki</p>
+<p>Voor uitgebreide installatie volg de <a href="https://github.com/nicoripkip/CMIDAT01K/wiki">wiki</a></p>
 
 
 ## Branches

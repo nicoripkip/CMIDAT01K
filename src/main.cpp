@@ -10,6 +10,7 @@
 #include <Wire.h>
 #include <Blynk.h>
 #include <BlynkSimpleEsp32.h>
+#include <LiquidCrystal_I2C.h>
 #include "headers/communication.hpp"
 
 
@@ -45,6 +46,20 @@ int get_temp_average();
 
 
 /**
+ * @brief Collectie met instellingen van het display
+ * 
+ */
+enum 
+{
+	LCD_CHARACTERS		= 16,
+	LCD_LINES			= 2,
+};
+
+
+LiquidCrystal_I2C lcd(LCD_SCREEN_ADDRESS, LCD_CHARACTERS, LCD_LINES);
+
+
+/**
  * @brief Functie voor het opzetten van het project
  * 
  */
@@ -58,6 +73,11 @@ void setup()
 
 	Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
 	Wire.begin(SDA_ADDRESS, SCL_ADDRESS);
+
+	// lcd.init();
+	// lcd.setBacklight(LOW);
+	// lcd.setCursor(1, 0);
+	// lcd.print("It wont work");
 }
 
 
@@ -87,14 +107,17 @@ void loop()
 		toggle_flag = 0;
 	}
 
-	if (take_over_state == 1) 
+	if (!take_over_state) 
 	{
 		switch_fan_state();
+		Blynk.virtualWrite(V5, 0);
 	}
 	else 
 	{
 		digitalWrite(RELAY_PIN, state);
+		Blynk.virtualWrite(V5, 1);
 	}
+
 }
 
 

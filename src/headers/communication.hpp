@@ -7,10 +7,10 @@
 #include <ArduinoJson.h>
 
 
-#define     SSID                "Tesla IoT"  
-#define     PASSWORD            "fsL6HgjN"
-// #define     SSID                "H369A432F1F" 
-// #define     WIFI_PASSWORD       "3D6269C97CEA"
+//#define     SSID                "Tesla IoT"  
+//#define     PASSWORD            "fsL6HgjN"
+#define     SSID                "H369A432F1F" 
+#define     PASSWORD            "3D6269C97CEA"
 #define     API_WRITE_KEY       "PGDFE2DFL4O2V5NZ"
 #define     API_READ_KEY        "C89CPM9HLSULP44W"
 
