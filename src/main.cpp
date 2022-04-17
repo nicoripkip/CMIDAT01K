@@ -11,6 +11,7 @@
 #include <Blynk.h>
 #include <BlynkSimpleEsp32.h>
 #include <LiquidCrystal_I2C.h>
+#include <math.h>
 #include "headers/communication.hpp"
 
 
@@ -24,7 +25,7 @@
 #define		SCL_ADDRESS							0x0C
 #define 	SDA_ADDRESS							0x0D
 
-#define 	TC74_TEMPERATURE_SENSOR_ADDRESS 	0x4A
+#define 	TC74_TEMPERATURE_SENSOR_ADDRESS 	0x07
 #define 	RELAY_PIN							0x20
 #define 	LCD_SCREEN_ADDRESS 					0x27
 
@@ -67,17 +68,11 @@ void setup()
 {
 	Heltec.begin(ENABLE_DISPLAY, ENABLE_LORA, ENABLE_SERIAL, PABOOST);
 	Serial.begin(BAUD_RATE);
-	// wifi.network_init();
 
 	pinMode(RELAY_PIN, OUTPUT);
 
 	Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
 	Wire.begin(SDA_ADDRESS, SCL_ADDRESS);
-
-	// lcd.init();
-	// lcd.setBacklight(LOW);
-	// lcd.setCursor(1, 0);
-	// lcd.print("It wont work");
 }
 
 
@@ -89,7 +84,7 @@ void loop()
 {
 	Blynk.run();
 
-	int temp = TC74_TEMPERATURE_get();
+	int temp = TC74_TEMPERATURE_get(analogRead(TC74_TEMPERATURE_SENSOR_ADDRESS), 0.022814, 131.523); // Calibratie functie
 	temperature_detected[temp_counter] = temp;
   	temp_counter++;
 
@@ -145,22 +140,17 @@ BLYNK_WRITE(V2)
  * @brief Functie voor het opzetten van de TC74 sensor
  * 
  */
-int TC74_TEMPERATURE_get()
+int TC74_TEMPERATURE_get(float adc, float a, float b)
 {
-  Wire.beginTransmission(TC74_TEMPERATURE_SENSOR_ADDRESS);
-  Wire.write(0x00);;
+	float temperature = (a*pow(adc, 2))+b;
+	int t = (int)temperature;
 
-  Wire.requestFrom(TC74_TEMPERATURE_SENSOR_ADDRESS, 1);
-  int temperature = Wire.read();
+	Blynk.virtualWrite(V1, t);
 
-  Wire.endTransmission(true);
+	Serial.print("[info]\t\tDe temperatuur is: ");
+	Serial.println(temperature);
 
-  Blynk.virtualWrite(V1, temperature);
-
-  Serial.print("[info]\t\tDe temperatuur is: ");
-  Serial.println(temperature);
-
-  return temperature;
+	return (int)temperature;
 }
 
 
